@@ -1,0 +1,36 @@
+Name: JFreechartEngine
+Version: 1.0
+Requires: ZK framework. Version >= 5.0.0
+Author: Farruco Sanjurjo (fsanjurjo@igalia.com)
+Source: 
+
+ABOUT
+ * Since version 5 of ZK (www.zkoss.org) there are some components that are no longer free as they used to be on their latest stable release (version 3.6.4). One of those components is the JfreeChartEngine, used to draw the charts.
+
+   This component is a fork from its GPL version at ZK 3.6.4 and initially used at Navalplan (www.navalplan.org) but it's free to use and modify by whoever wants. But remember to share your changes.
+
+NOTES ABOUT USAGE
+ * To change the engine that draws the charts on your ZK application you have to add a configuration property to your zk.xml file:
+
+   (on WEB-INF/zk.xml)
+
+   ...
+   <library-property>
+       <name>org.zkoss.zul.chart.engine.class</name>
+       <value>com.igalia.java.zk.components.JFreeChartEngine</value>
+   </library-property>
+   ...
+
+SUPPORTED CHARTS
+
+ * Currently the only supported charts on this engine are:
+      
+      - TimeSeries
+      - Bar
+      - Bar3D
+
+ * If you add any other format and wish it to be added to the component please send me a patch
+
+INSTALL
+
+ * If you have maven (http://maven.apache.org/) installed on your computer just issue: mvn install
