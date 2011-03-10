@@ -1,4 +1,4 @@
-/* 
+/*
 * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -13,7 +13,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.navalplanner.web.common.components;
+package com.igalia.java.zk.components;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -103,7 +103,7 @@ public class JFreeChartEngine implements ChartEngine {
         _type = chart.getType();
         return _chartImpl;
     }
-    @Override
+
     public byte[] drawChart(Object data) {
         Chart chart = (Chart) data;
         ChartImpl impl = getChartImpl(chart);
