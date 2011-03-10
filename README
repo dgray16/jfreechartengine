@@ -3,11 +3,13 @@ Version: 1.0
 Requires: ZK framework. Version >= 5.0.0
 Author: Farruco Sanjurjo (fsanjurjo@igalia.com)
 Source: 
+License: AGPL
+Copyright: Igalia S.L
 
 ABOUT
  * Since version 5 of ZK (www.zkoss.org) there are some components that are no longer free as they used to be on their latest stable release (version 3.6.4). One of those components is the JfreeChartEngine, used to draw the charts.
 
-   This component is a fork from its GPL version at ZK 3.6.4 and initially used at Navalplan (www.navalplan.org) but it's free to use and modify by whoever wants. But remember to share your changes.
+   This component is a fork from its GPL version at ZK 3.6.4 and initially used at Navalplan (www.navalplan.org) but it's free to use and modify by whoever wants as it's released under the AGPL license (so remember to share your changes).
 
 NOTES ABOUT USAGE
  * To change the engine that draws the charts on your ZK application you have to add a configuration property to your zk.xml file:
