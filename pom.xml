@@ -6,7 +6,7 @@
   <artifactId>jfreechartengine</artifactId>
   <version>1.0</version>
   <properties>
-        <zk.version>5.0.5</zk.version>
+        <zk.version>5.0.9</zk.version>
   </properties>
   <dependencies>
   	<dependency>
