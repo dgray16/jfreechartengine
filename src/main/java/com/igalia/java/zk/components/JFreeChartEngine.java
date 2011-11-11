@@ -37,11 +37,13 @@ import org.jfree.chart.entity.CategoryItemEntity;
 import org.jfree.chart.entity.ChartEntity;
 import org.jfree.chart.entity.JFreeChartEntity;
 import org.jfree.chart.entity.LegendItemEntity;
+import org.jfree.chart.entity.PieSectionEntity;
 import org.jfree.chart.entity.PlotEntity;
 import org.jfree.chart.entity.TickLabelEntity;
 import org.jfree.chart.entity.TitleEntity;
 import org.jfree.chart.entity.XYItemEntity;
 import org.jfree.chart.plot.CategoryPlot;
+import org.jfree.chart.plot.PiePlot;
 import org.jfree.chart.plot.Plot;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
@@ -49,6 +51,8 @@ import org.jfree.chart.title.LegendTitle;
 import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.gantt.GanttCategoryDataset;
+import org.jfree.data.general.DefaultPieDataset;
+import org.jfree.data.general.PieDataset;
 import org.jfree.data.time.RegularTimePeriod;
 import org.jfree.data.time.TimeSeriesCollection;
 import org.jfree.data.xy.IntervalXYDataset;
@@ -64,6 +68,7 @@ import org.zkoss.zul.Area;
 import org.zkoss.zul.CategoryModel;
 import org.zkoss.zul.Chart;
 import org.zkoss.zul.ChartModel;
+import org.zkoss.zul.PieModel;
 import org.zkoss.zul.XYModel;
 import org.zkoss.zul.impl.ChartEngine;
 
@@ -95,6 +100,8 @@ public class JFreeChartEngine implements ChartEngine {
             _chartImpl = new TimeSeriesChart();
         }else if ( Chart.BAR.equals(chart.getType())){
             _chartImpl = chart.isThreeD() ? new Bar3dChart() : new BarChart();
+        } else if (Chart.PIE.equals(chart.getType())) {
+            _chartImpl = chart.isThreeD() ? new Pie3dChart() : new PieChart();
         }else {
             throw new RuntimeException("Unsupported chart type: " + chart.getType());
         }
@@ -188,6 +195,8 @@ public class JFreeChartEngine implements ChartEngine {
             if (ytkfont != null) {
                 xyplot.getRangeAxis().setTickLabelFont(ytkfont);
             }
+        } else if (plot instanceof PiePlot) {
+            plot.setOutlineStroke(null);
         }
 
         //callbacks for each area
@@ -349,6 +358,16 @@ public class JFreeChartEngine implements ChartEngine {
     }
 
     /**
+     * decode PieSectionEntity into key-value pair of Area's componentScope.
+     */
+    private void decodePieSectionInfo(Area area, PieSectionEntity info) {
+        PieDataset dataset = info.getDataset();
+        Comparable category = info.getSectionKey();
+        area.setAttribute("value", dataset.getValue(category));
+        area.setAttribute("category", category);
+    }
+
+    /**
      * transfer a CategoryModel into JFreeChart CategoryDataset.
      */
     private CategoryDataset CategoryModelToCategoryDataset(CategoryModel model) {
@@ -359,6 +378,19 @@ public class JFreeChartEngine implements ChartEngine {
             Comparable category = (Comparable) key.get(1);
             Number value = (Number) model.getValue(series, category);
             dataset.setValue(value, series, category);
+        }
+        return dataset;
+    }
+
+    /**
+     * transfer a PieModel into JFreeChart PieDataset.
+     */
+    private PieDataset PieModelToPieDataset(PieModel model) {
+        final DefaultPieDataset dataset = new DefaultPieDataset();
+        for (final Iterator it = model.getCategories().iterator(); it.hasNext();) {
+            final Comparable category = (Comparable)it.next();
+            Number value = (Number) model.getValue(category);
+            dataset.setValue(category, value);
         }
         return dataset;
     }
@@ -550,5 +582,55 @@ public class JFreeChartEngine implements ChartEngine {
         }
     }
 
+    /** pie chart */
+    private class PieChart extends ChartImpl {
+        @Override
+        void render(Chart chart, Area area, ChartEntity info) {
+            if (info instanceof LegendItemEntity) {
+                area.setAttribute("entity", "LEGEND");
+                Integer seq = (Integer) chart.getAttribute("LEGEND_SEQ");
+                seq = seq == null ? new Integer(0) : new Integer(
+                        seq.intValue() + 1);
+                chart.setAttribute("LEGEND_SEQ", seq);
+                decodeLegendInfo(area, (LegendItemEntity) info, chart);
+            } else if (info instanceof PieSectionEntity) {
+                area.setAttribute("entity", "DATA");
+                decodePieSectionInfo(area, (PieSectionEntity) info);
+            } else {
+                area.setAttribute("entity", "TITLE");
+                if (chart.isShowTooltiptext()) {
+                    area.setTooltiptext(chart.getTitle());
+                }
+            }
+        }
+
+        @Override
+        public JFreeChart createChart(Chart chart) {
+            PieModel model = (PieModel) chart.getModel();
+            if (!(model instanceof PieModel)) {
+                throw new UiException("model must be a org.zkoss.zul.PieModel");
+            }
+            return ChartFactory.createPieChart(chart.getTitle(),
+                    PieModelToPieDataset(model), chart.isShowLegend(),
+                    chart.isShowTooltiptext(), false);
+        }
+
+    }
+
+    /** pie3d chart */
+    private class Pie3dChart extends PieChart {
+        @Override
+        public JFreeChart createChart(Chart chart) {
+            PieModel model = (PieModel) chart.getModel();
+            if (!(model instanceof PieModel)) {
+                throw new UiException("model must be a org.zkoss.zul.PieModel");
+            }
+            return ChartFactory.createPieChart3D(chart.getTitle(),
+                    PieModelToPieDataset(model),
+                    chart.isShowLegend(),
+                    chart.isShowTooltiptext(),
+                    false);
+        }
+    }
 
 }
