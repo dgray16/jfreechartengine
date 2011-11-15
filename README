@@ -1,6 +1,6 @@
 Name: JFreechartEngine
-Version: 1.0
-Requires: ZK framework. Version >= 5.0.0
+Version: 1.1
+Requires: ZK framework. Version >= 5.0.9
 Author: Farruco Sanjurjo (fsanjurjo@igalia.com)
 Source: 
 License: AGPL
@@ -30,13 +30,15 @@ SUPPORTED CHARTS
       - TimeSeries
       - Bar
       - Bar3D
+      - Pie
+      - Pie3D
 
  * If you add any other format and wish it to be added to the component please send me a patch
 
 DEPENDENCIES
 
  * This component has dependencies with ZK and jfreechart. They are all setup on the pom file.
- * This component was built using ZK 5.0.5 but it might work with older reseales (not older than 5.0.0). Just change the <zk.version/> tag in the pom file to match your ZK version. 
+ * This component was built using ZK 5.0.9 but it might work with older releases (not older than 5.0.0). Just change the <zk.version/> tag in the pom file to match your ZK version. 
 
 INSTALL
 
