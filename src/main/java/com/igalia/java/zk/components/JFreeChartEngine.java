@@ -162,6 +162,25 @@ public class JFreeChartEngine implements ChartEngine {
                 cplot.getDomainAxis().setTickLabelFont(xtkfont);
             }
 
+            Color[] colorMappings = (Color[])chart.getAttribute("series-color-mappings");
+            if (colorMappings != null) {
+                for (int ii=0; ii < colorMappings.length; ii++) {
+                    cplot.getRenderer().setSeriesPaint(ii, colorMappings[ii]);
+                }
+            }
+
+            Double lowerBound = (Double)chart.getAttribute("range-axis-lower-bound");
+            if (lowerBound != null) {
+                cplot.getRangeAxis().setAutoRange(false);
+                cplot.getRangeAxis().setLowerBound(lowerBound);
+            }
+
+            Double upperBound = (Double)chart.getAttribute("range-axis-upper-bound");
+            if (upperBound != null) {
+                cplot.getRangeAxis().setAutoRange(false);
+                cplot.getRangeAxis().setUpperBound(upperBound);
+            }
+
             //Range axis(y axis)
             final Font ylbfont = chart.getYAxisFont();
             final Font ytkfont = chart.getYAxisTickFont();
