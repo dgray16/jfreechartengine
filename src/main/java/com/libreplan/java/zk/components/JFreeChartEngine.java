@@ -280,10 +280,12 @@ public class JFreeChartEngine implements ChartEngine {
                 final String url = ce.getURLText();
 
                 // Workaround JFreeChart's bug (skip replicate areas)
-                if ( url != null && preUrl == null ) {
-                    preUrl = url;
-                } else if (url.equals(preUrl)) { // Start replicate, skip
-                    break;
+                if ( url != null ) {
+                    if ( preUrl == null ) {
+                        preUrl = url;
+                    } else if (url.equals(preUrl)) { // Start replicate, skip
+                        break;
+                    }
                 }
 
                 /*
@@ -394,13 +396,13 @@ public class JFreeChartEngine implements ChartEngine {
     private CategoryDataset categoryModelToCategoryDataset(CategoryModel model) {
         final DefaultCategoryDataset dataset = new DefaultCategoryDataset();
 
-        for (List<Comparable<?>> comparables : model.getKeys()) {
-            Comparable series = comparables.get(0);
-            Comparable category = comparables.get(1);
+        for (final Iterator it = model.getKeys().iterator(); it.hasNext();) {
+            final List key = (List) it.next();
+            Comparable series = (Comparable) key.get(0);
+            Comparable category = (Comparable) key.get(1);
             Number value = model.getValue(series, category);
             dataset.setValue(value, series, category);
         }
-
         return dataset;
     }
 
@@ -409,10 +411,13 @@ public class JFreeChartEngine implements ChartEngine {
      */
     private PieDataset pieModelToPieDataset(PieModel model) {
         final DefaultPieDataset dataset = new DefaultPieDataset();
-        for (Comparable<?> category : model.getCategories()) {
+
+        for (final Iterator it = model.getCategories().iterator(); it.hasNext();) {
+            final Comparable category = (Comparable)it.next();
             Number value = model.getValue(category);
             dataset.setValue(category, value);
         }
+
         return dataset;
     }
 
@@ -463,7 +468,7 @@ public class JFreeChartEngine implements ChartEngine {
                     chart.getTitle(),
                     chart.getXAxis(),
                     chart.getYAxis(),
-                    xyModelToTimeDataset((XYModel)model, chart),
+                    xyModelToTimeDataset((XYModel) model, chart),
                     chart.isShowLegend(),
                     chart.isShowTooltiptext(),
                     true);
@@ -610,7 +615,7 @@ public class JFreeChartEngine implements ChartEngine {
                         chart.getTitle(),
                         chart.getXAxis(),
                         chart.getYAxis(),
-                        categoryModelToCategoryDataset((CategoryModel)model),
+                        categoryModelToCategoryDataset((CategoryModel) model),
                         getOrientation(chart.getOrient()),
                         chart.isShowLegend(),
                         chart.isShowTooltiptext(),
@@ -623,7 +628,7 @@ public class JFreeChartEngine implements ChartEngine {
                         chart.getXAxis(),
                         false,
                         chart.getYAxis(),
-                        (IntervalXYDataset) xyModelToXYDataset((XYModel)model),
+                        (IntervalXYDataset) xyModelToXYDataset((XYModel) model),
                         getOrientation(chart.getOrient()),
                         chart.isShowLegend(),
                         chart.isShowTooltiptext(),
@@ -664,7 +669,7 @@ public class JFreeChartEngine implements ChartEngine {
                     chart.getTitle(),
                     chart.getXAxis(),
                     chart.getYAxis(),
-                    categoryModelToCategoryDataset((CategoryModel)model),
+                    categoryModelToCategoryDataset((CategoryModel) model),
                     getOrientation(chart.getOrient()),
                     chart.isShowLegend(),
                     chart.isShowTooltiptext(),
